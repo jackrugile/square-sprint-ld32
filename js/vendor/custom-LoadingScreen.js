@@ -60,3 +60,5 @@ PLAYGROUND.LoadingScreen = {
 		this.app.layer.restore();
 	}
 };
+
+PLAYGROUND.LoadingScreen = false;

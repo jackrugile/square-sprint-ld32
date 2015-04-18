@@ -15,6 +15,3 @@ $.game.ready = function() {
 
 $.game.step = function( dt ) {
 };
-
-$.game.keydown =function( data ) {
-};
