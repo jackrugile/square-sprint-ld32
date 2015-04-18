@@ -1,2 +1,1 @@
-# an-unconventional-weapon-ld32
-Ludum Dare 32
+# An Unconventional Weapon - Ludum Dare 32
