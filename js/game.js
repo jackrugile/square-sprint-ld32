@@ -6,11 +6,16 @@ $.game = playground({
 });
 
 $.game.create = function() {
+	this.loadSounds( 'warp' );
+
 	$.ctx = this.layer;
 };
 
 $.game.ready = function() {
 	this.setState( $.statePlay );
+};
+
+$.game.step = function( dt ) {
 };
 
 $.game.step = function( dt ) {

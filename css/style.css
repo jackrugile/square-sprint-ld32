@@ -8,7 +8,5 @@ body {
 }
 
 canvas {
-	background: #111;
-	background: radial-gradient(#332, #110);
-	box-shadow: 0 0 0 2px #443;
+	cursor: none;
 }
