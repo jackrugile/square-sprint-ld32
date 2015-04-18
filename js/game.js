@@ -6,8 +6,7 @@ $.game = playground({
 });
 
 $.game.create = function() {
-	this.loadSounds( 'warp' );
-
+	this.loadSounds( 'warp1', 'charge1' );
 	$.ctx = this.layer;
 };
 
