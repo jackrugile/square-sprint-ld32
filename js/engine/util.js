@@ -31,7 +31,7 @@ $.rangeIntersect = function( min0, max0, min1, max1 ) {
 
 // credit: Keith Peters - https://github.com/bit101/CodingMath
 $.collide = function( r0, r1 ) {
-	return $.rangeIntersect( r0.x, r0.x + r0.width, r1.x, r1.x + r1.width ) && $.rangeIntersect( r0.y, r0.y + r0.height, r1.y, r1.y + r1.height );
+	return $.rangeIntersect( r0.x, r0.x + r0.w, r1.x, r1.x + r1.w ) && $.rangeIntersect( r0.y, r0.y + r0.h, r1.y, r1.y + r1.h );
 };
 
 // credit: Keith Peters - https://github.com/bit101/CodingMath

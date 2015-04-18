@@ -4,8 +4,10 @@ $.statePlay.create = function() {
 	this.tick = 0;
 	this.hero = new $.hero();
 	this.particles = new $.pool( $.particle, 300 );
-	this.pings = new $.pool( $.ping, 50 );
-	this.enemies = new $.pool( $.enemy, 50 );
+	this.pings = new $.pool( $.ping, 100 );
+	this.enemies = new $.pool( $.enemy, 100 );
+
+	this.generateLevel( 1 );
 };
 
 $.statePlay.step = function( dt ) {
@@ -14,19 +16,11 @@ $.statePlay.step = function( dt ) {
 	this.enemies.each( 'step' );
 	this.hero.step();
 	this.tick++;
-
-	if( this.tick % 50 == 0 ) {
-		this.enemies.create({
-			x: $.game.width,
-			y: $.game.height / 2 - 64,
-			w: 40,
-			h: 40
-		});
-	}
 };
 
 $.statePlay.render = function( dt ) {
-	$.ctx.clear( 'hsla(' + this.hero.hue + ', 10%, 10%, 1)' );
+	//$.ctx.clear( 'hsla(' + this.hero.hue + ', 10%, 10%, 1)' );
+	$.ctx.clear( '#181818' );
 
 	this.particles.each( 'render' );
 	this.pings.each( 'render' );
@@ -44,34 +38,6 @@ $.statePlay.render = function( dt ) {
 	$.ctx.fillStyle( '#fff' );
 	$.ctx.fillCircle( 0, 0, 1 );
 	$.ctx.restore();
-
-	/*$.ctx.lineWidth( 2 );
-	$.ctx.strokeStyle( 'rgba(255, 255, 255, 0.5 )' );
-	//$.ctx.strokeCircle( $.game.width / 2 + Math.cos( this.tick * 0.02 ) * 50, $.game.height / 2 + Math.sin( this.tick * 0.02 ) * 50, 16 );
-	$.ctx.strokeCircle( $.game.width / 2, $.game.height / 2 + Math.sin( this.tick * 0.02 ) * 100, 32 );*/
-
-
-
-
-	/*var p1 = { x: 450, y: 200 },
-		p2 = { x: 550, y: 300 },
-		circle = {
-			x: 300,
-			y: 200,
-			r: 130
-		},
-		collision = $.circleLineIntersect( p1.x, p1.y, p2.x, p2.y, circle.x, circle.y, circle.r );
-
-	console.log( collision );
-
-	$.ctx.beginPath();
-	$.ctx.moveTo( p1.x, p1.y );
-	$.ctx.lineTo( p2.x, p2.y );
-	$.ctx.strokeStyle( '#fff' );
-	$.ctx.stroke();
-
-	$.ctx.beginPath();
-	$.ctx.strokeCircle( circle.x, circle.y, circle.r );*/
 };
 
 $.statePlay.mousedown = function( e ) {
@@ -81,3 +47,30 @@ $.statePlay.mousedown = function( e ) {
 		this.hero.warp( e.x, e.y );
 	}
 };
+
+$.statePlay.generateLevel = function( level ) {
+	var level = $.levels[ level - 1 ],
+		size = parseInt( level.properties.size ),
+		map = level.layers[ 0 ].data,
+		width = level.width,
+		height = level.height,
+		padding = 10;
+
+	for( var row = 0; row < height; row++ ) {
+		for( var col = 0; col < width; col++ ) {
+			var value = map[ ( row * width ) + col ];
+			//console.log( value );
+			//if( $.mapKey[ value ] == 'enemy' ) {
+				//console.log( row );
+				var enemy = this.enemies.create({
+					x: col * size + padding / 2,
+					y: row * size + padding / 2,
+					w: size - padding,
+					h: size - padding
+				});
+				console.log( enemy );
+
+			//}
+		}
+	}
+}

@@ -24,11 +24,13 @@ $.pool.prototype.create = function( opt ) {
 		this.alive.push( obj );
 		this.deadLength--;
 		this.length++;
+		return obj;
 	} else {
 		var newItem =  new this.base();
 		newItem.init( opt );
 		this.alive.push( newItem );
 		this.length++;
+		return newItem;
 	}
 };
 

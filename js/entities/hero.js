@@ -145,7 +145,7 @@ $.hero.prototype.render = function() {
 		$.ctx.fill();
 
 		$.ctx.beginPath();
-		$.ctx.arc( this.x + $.rand( -3, 3 ), this.y + $.rand( -3, 3 ), this.radius * 3 + $.rand( -10, 10 ), this.chargeTweenAngle - Math.PI * 0.4 + $.rand( -0.2, 0.2 ), this.chargeTweenAngle + Math.PI * 0.4 + $.rand( -0.2, 0.2 ), false );
+		$.ctx.arc( this.x + $.rand( -3, 3 ), this.y + $.rand( -3, 3 ), Math.max( 0, this.radius * 3 + $.rand( -10, 10 ) ), this.chargeTweenAngle - Math.PI * 0.4 + $.rand( -0.2, 0.2 ), this.chargeTweenAngle + Math.PI * 0.4 + $.rand( -0.2, 0.2 ), false );
 		$.ctx.lineWidth( $.rand( 1, 2 ) );
 		$.ctx.strokeStyle( 'hsla(' + this.hue + ', 100%, ' + $.rand( 50, 90 ) + '%, ' + $.rand( 0.05, 0.25 ) + ')' );
 		$.ctx.stroke();
@@ -253,6 +253,10 @@ $.hero.prototype.warp = function( x, y ) {
 
 	if( this.warping ) {
 		this.warpTween.end();
+	}
+
+	if( this.chargingTail ) {
+		this.chargeTailTween.end();
 	}
 
 	this.warpTween = $.game.tween( this )

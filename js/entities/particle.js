@@ -24,5 +24,5 @@ $.particle.prototype.step = function() {
 
 $.particle.prototype.render = function() {
 	$.ctx.fillStyle( 'hsla(' + $.game.state.hero.hue + ', 90%, 70%, ' + ( this.life * this.alphaBase ) + ')' );
-	$.ctx.fillCircle( this.x, this.y, this.radius );
+	$.ctx.fillCircle( this.x, this.y, Math.max( 0, this.radius ) );
 };
