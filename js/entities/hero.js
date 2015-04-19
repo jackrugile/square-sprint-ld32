@@ -209,7 +209,7 @@ $.hero.prototype.charge = function( x, y ) {
 	if( this.charging ) {
 		this.chargeTween.end();
 	}
-	this.chargeTween = $.game.tween( this ).to( { x: x, y: y }, 0.2, 'outExpo' );
+	this.chargeTween = $.game.tween( this ).to( { x: x, y: y }, 0.3, 'outExpo' );
 
 	this.chargeTail.x = this.x;
 	this.chargeTail.y = this.y;

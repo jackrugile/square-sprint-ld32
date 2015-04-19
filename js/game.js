@@ -6,6 +6,11 @@ $.game = playground({
 });
 
 $.game.create = function() {
+	this.loadImages(
+		'screen-overlay',
+		'light'
+	);
+
 	this.loadSounds(
 		'warp1',
 		'charge1',

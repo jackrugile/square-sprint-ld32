@@ -1,6 +1,7 @@
 $.statePlay = {};
 
 $.statePlay.create = function() {
+	this.lightPosition = { x: 0, y: 0 };
 	this.level = null;
 	this.levelNumber = location.hash ? parseInt( location.hash.substring( 1 ) ) : 1;
 	this.levelTotal = $.levels.length;
@@ -26,11 +27,14 @@ $.statePlay.step = function( dt ) {
 		}
 	}
 
+	this.lightPosition.x += ( this.hero.x - 900 - this.lightPosition.x ) * 0.1;
+	this.lightPosition.y += ( this.hero.y - 600 - this.lightPosition.y ) * 0.1;
+
 	this.tick++;
 };
 
 $.statePlay.render = function( dt ) {
-	$.ctx.clear( '#000' );
+	$.ctx.clear( '#222' );
 
 	this.walls.each( 'render' );
 	this.enemies.each( 'render' );
@@ -52,6 +56,10 @@ $.statePlay.render = function( dt ) {
 	$.ctx.fillStyle( '#fff' );
 	$.ctx.fillCircle( 0, 0, 1 );
 	$.ctx.restore();
+
+	$.ctx.drawImage( $.game.images[ 'light' ], this.lightPosition.x, this.lightPosition.y );
+
+	$.ctx.drawImage( $.game.images[ 'screen-overlay' ], 0, 0 );
 };
 
 $.statePlay.mousedown = function( e ) {

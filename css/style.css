@@ -1,3 +1,14 @@
+@font-face {
+	font-family: 'droidsansmono';
+	src: url('../fonts/DroidSansMono-webfont.eot');
+	src: url('../fonts/DroidSansMono-webfont.eot?#iefix') format('embedded-opentype'),
+		 url('../fonts/DroidSansMono-webfont.woff') format('woff'),
+		 url('../fonts/DroidSansMono-webfont.ttf') format('truetype'),
+		 url('../fonts/DroidSansMono-webfont.svg#droid_sans_monoregular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
 html,
 body {
 	height: 100%;
@@ -5,9 +16,11 @@ body {
 
 body {
 	background: #000;
+	background: radial-gradient(#333, #000);
+	font-family: 'droidsansmono', monospace;
 }
 
 canvas {
-	box-shadow: 0 0 0 2px #1e1e1e;
+	box-shadow: 0 0 0 10px rgba(255, 255, 255, 0.1);
 	cursor: none;
 }

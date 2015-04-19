@@ -46,7 +46,7 @@ $.enemy.prototype.render = function() {
 	$.ctx.save();
 	$.ctx.translate( this.x + this.w / 2 , this.y + this.h / 2 );
 	$.ctx.scale( scale, scale );
-	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 75%, 50%, 1)' );
+	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 80%, 55%, 1)' );
 	$.ctx.fillRect( -this.w / 2, -this.h / 2, this.w, this.h );
 	if( this.deathTick ) {
 		$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );

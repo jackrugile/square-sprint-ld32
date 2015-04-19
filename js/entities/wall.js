@@ -20,7 +20,7 @@ $.wall.prototype.render = function() {
 	$.ctx.save();
 	$.ctx.translate( this.x + this.w / 2 , this.y + this.h / 2 );
 	$.ctx.scale( scale, scale );
-	$.ctx.fillStyle( this.clickTick ? 'hsla(0, 0%, ' + ( 0.25 + ( ( this.clickTick / this.clickTickMax ) * 0.75 ) * 100 ) + '%, 1)' : '#1e1e1e' );
+	$.ctx.fillStyle( this.clickTick ? 'hsla(0, 0%, ' + ( 0.25 + ( ( this.clickTick / this.clickTickMax ) * 0.75 ) * 100 ) + '%, 1)' : '#333' );
 	$.ctx.fillRect( -this.w / 2, -this.h / 2, this.w, this.h );
 	$.ctx.restore();
 };
