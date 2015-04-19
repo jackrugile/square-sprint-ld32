@@ -122,8 +122,8 @@ $.hero.prototype.render = function() {
 			};
 
 		var grad = $.ctx.createLinearGradient( p1.x, p1.y, this.x, this.y );
-		grad.addColorStop( 0, 'hsla(' + $.game.state.level.hue + ', 80%, 90%, 1)' );
-		grad.addColorStop( 1, 'hsla(' + $.game.state.level.hue + ', 80%, 60%, 1)' );
+		grad.addColorStop( 0, 'hsla(' + $.game.state.level.hue + ', 90%, 90%, 1)' );
+		grad.addColorStop( 1, 'hsla(' + $.game.state.level.hue + ', 90%, 60%, 1)' );
 
 		$.ctx.beginPath();
 		$.ctx.moveTo( p1.x, p1.y );
@@ -141,9 +141,9 @@ $.hero.prototype.render = function() {
 	}
 
 	if( this.chargingTail ) {
-		$.ctx.fillStyle( 'hsla(' + $.game.state.level.hue + ', 80%, 60%, 1)' );
+		$.ctx.fillStyle( 'hsla(' + $.game.state.level.hue + ', 90%, 60%, 1)' );
 	} else {
-		$.ctx.fillStyle( 'hsla(' + $.game.state.level.hue + ', 80%, ' + ( ( 0.25 + this.pulsing * 0.5 ) * 100 ) + '%, 1)' );
+		$.ctx.fillStyle( 'hsla(' + $.game.state.level.hue + ', 90%, ' + ( ( 0.25 + this.pulsing * 0.5 ) * 100 ) + '%, 1)' );
 	}
 	
 	$.ctx.save()
@@ -195,6 +195,13 @@ $.hero.prototype.handleMovement = function() {
 };
 
 $.hero.prototype.charge = function( x, y ) {
+	if( this.checkWallCollision( x, y, true ) || !this.checkScreenCollision( x, y ) ) {
+		var sound = $.game.playSound( 'error1' );
+		$.game.sound.setVolume( sound, 0.6 );
+		$.game.sound.setPlaybackRate( sound, 0.9 + $.rand( -0.1, 0.1 ) );
+		return;
+	}
+
 	this.vx = 0;
 	this.vy = 0;
 	x = Math.min( $.game.width - this.diag, Math.max( this.diag, x ) );
@@ -222,7 +229,10 @@ $.hero.prototype.charge = function( x, y ) {
 };
 
 $.hero.prototype.warp = function( x, y ) {
-	if( this.checkWallCollision( x, y ) || !this.checkScreenCollision ) {
+	if( this.checkWallCollision( x, y, false ) || !this.checkScreenCollision( x, y ) ) {
+		var sound = $.game.playSound( 'error1' );
+		$.game.sound.setVolume( sound, 0.3 );
+		$.game.sound.setPlaybackRate( sound, 0.9 + $.rand( -0.1, 0.1 ) );
 		return;
 	}
 
@@ -265,21 +275,39 @@ $.hero.prototype.warp = function( x, y ) {
 };
 
 $.hero.prototype.checkScreenCollision = function( x, y ) {
-	for( var i = 0; i < $.game.state.walls.length; i++ ) {
-		var wall = $.game.state.walls.alive[ i ];
-		if( $.pointInRect( x, y, wall.x, wall.y, wall.w, wall.h ) ) {
-			return true;
-		}
-	}
-	return false;
+	return $.pointInRect( x, y, 0, 0, $.game.width, $.game.height );
 };
 
-$.hero.prototype.checkWallCollision = function( x, y ) {
+$.hero.prototype.checkWallCollision = function( x, y, through ) {
 	for( var i = 0; i < $.game.state.walls.length; i++ ) {
 		var wall = $.game.state.walls.alive[ i ];
 		if( $.pointInRect( x, y, wall.x, wall.y, wall.w, wall.h ) ) {
+			wall.clickTick = wall.clickTickMax;
 			return true;
 		}
+
+		if( through ) {
+			var tl = { x: wall.x, y: wall.y },
+				tr = { x: wall.x + wall.w, y: wall.y },
+				bl = { x: wall.x, y: wall.y + wall.h },
+				br = { x: wall.x + wall.w, y: wall.y + wall.h },
+				h1 = { x: this.x, y: this.y },
+				h2 = { x: x, y: y };
+			if( $.segmentIntersect( tl, tr, h1, h2 ) ) {
+				// check top left - top right
+				return true;
+			} else if( $.segmentIntersect( tr, br, h1, h2 ) ) {
+				// check top right - bottom right
+				return true;
+			} else if( $.segmentIntersect( br, bl, h1, h2 ) ) {
+				// check bottom right- bottom left
+				return true;
+			} else if( $.segmentIntersect( bl, tl, h1, h2 ) ) {
+				// check bottom left - top left
+				return true;
+			}
+		}
+
 	}
 	return false;
 };

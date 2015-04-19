@@ -27,7 +27,8 @@ $.enemy.prototype.step = function() {
 		this.deathTick = this.deathTickMax;
 		//this.vy = 3;
 		var sound = $.game.playSound( 'explode1' );
-		$.game.sound.setPlaybackRate( sound, 0.9 + $.rand( -0.1, 0.1 ) );
+		$.game.sound.setVolume( sound, 0.5 );
+		$.game.sound.setPlaybackRate( sound, 0.8 + $.rand( -0.2, 0.2 ) );
 	}
 
 	/*if( this.x + this.w < 0 || ( this.dead && this.y > $.game.height ) ) {
@@ -35,32 +36,23 @@ $.enemy.prototype.step = function() {
 	}*/
 
 	if( this.dead && this.deathTick<= 0 ) {
+		$.game.state.level.killed++;
 		$.game.state.enemies.release( this );
 	}
 };
 
 $.enemy.prototype.render = function() {
-	var scale = 0.95 + Math.sin( $.game.lifetime * 4 ) * 0.05;
+	var scale = 0.9 + Math.sin( $.game.lifetime * 4 ) * 0.05;
 	$.ctx.save();
 	$.ctx.translate( this.x + this.w / 2 , this.y + this.h / 2 );
 	$.ctx.scale( scale, scale );
-	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 30%, 15%, 1)' );
+	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 75%, 50%, 1)' );
 	$.ctx.fillRect( -this.w / 2, -this.h / 2, this.w, this.h );
-	$.ctx.restore();
-
-	var scale = 0.75 + Math.cos( $.game.lifetime * 4 ) * 0.25;
-	$.ctx.save();
-	$.ctx.translate( this.x + this.w / 2 , this.y + this.h / 2 );
-	$.ctx.scale( scale, scale );
-	$.ctx.rotate( $.game.lifetime * 2 );
-	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 70%, 60%, 1)' );
-	$.ctx.fillRect(	-4, -4, 8, 8 );
-	$.ctx.restore();
-
 	if( this.deathTick ) {
 		$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
-		$.ctx.fillRect( this.x, this.y, this.w, this.h );
+		$.ctx.fillRect( -this.w / 2, -this.h / 2, this.w, this.h );
 	}
+	$.ctx.restore();
 };
 
 $.enemy.prototype.checkCollision = function() {
