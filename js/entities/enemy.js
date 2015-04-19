@@ -8,12 +8,13 @@ $.enemy.prototype.init = function( opt ) {
 	this.vy = 0;
 	this.deathTick = 0;
 	this.deathTickMax = 5;
+	this.hasCounted = false;
 };
 
 $.enemy.prototype.step = function() {
 	if( this.dead ) {
-		//this.vy += 1;
-		//this.y += this.vy;
+		this.vy += 1;
+		this.y += this.vy;
 	} else {
 		this.tick++;
 	}
@@ -25,21 +26,25 @@ $.enemy.prototype.step = function() {
 	if( !this.dead && this.checkCollision() ) {
 		this.dead = true;
 		this.deathTick = this.deathTickMax;
-		//this.vy = 3;
+		this.vy = 3;
 		var sound = $.game.playSound( 'explode1' );
 		$.game.sound.setVolume( sound, 0.5 );
 		$.game.sound.setPlaybackRate( sound, 0.8 + $.rand( -0.2, 0.2 ) );
 	}
 
-	/*if( this.x + this.w < 0 || ( this.dead && this.y > $.game.height ) ) {
+	if( this.dead && this.y > $.game.height ) {
 		$.game.state.enemies.release( this );
-	}*/
+	}
 
-	if( this.dead && this.deathTick<= 0 ) {
-		$.game.state.shake.translate = $.rand( 3, 7 );
-		$.game.state.shake.rotate = $.rand( 0, 0.025 );
+	if( this.dead && !this.hasCounted && this.deathTick <= 0 ) {
+		if( $.game.state.shake.translate < 8 ) {
+			$.game.state.shake.translate += 1;
+		}
+		if( $.game.state.shake.rotate < 0.025 ) {
+			$.game.state.shake.rotate += 0.004;
+		}
 		$.game.state.level.killed++;
-		$.game.state.enemies.release( this );
+		this.hasCounted = true;
 	}
 };
 
@@ -51,7 +56,7 @@ $.enemy.prototype.render = function() {
 	$.ctx.translate( -this.x - this.w / 2 , -this.y - this.h / 2 );
 	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 80%, 55%, 1)' );
 	$.ctx.fillRect( this.x, this.y, this.w, this.h );
-	if( this.deathTick ) {
+	if( this.dead ) {
 		$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
 		$.ctx.fillRect( this.x, this.y, this.w, this.h );
 	}

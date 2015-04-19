@@ -42,10 +42,10 @@ $.statePlay.step = function( dt ) {
 	this.lightPosition.y += ( this.hero.y - 600 - this.lightPosition.y ) * 0.1;
 
 	if( this.shake.translate > 0 ) {
-		this.shake.translate *= 0.9;
+		this.shake.translate *= 0.92;
 	}
 	if( this.shake.rotate > 0 ) {
-		this.shake.rotate *= 0.9;
+		this.shake.rotate *= 0.92;
 	}
 
 	this.tick++;

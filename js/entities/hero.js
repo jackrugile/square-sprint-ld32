@@ -166,7 +166,7 @@ $.hero.prototype.handleMovement = function() {
 		return;
 	}
 
-	if( $.game.keyboard.keys.w || $.game.keyboard.keys.up ) {
+	/*if( $.game.keyboard.keys.w || $.game.keyboard.keys.up ) {
 		if( this.vy > -this.vmax ) {
 			this.vy -= this.accel;
 		}
@@ -185,17 +185,17 @@ $.hero.prototype.handleMovement = function() {
 		if( this.vx > -this.vmax ) {
 			this.vx -= this.accel;
 		}
-	}
+	}*/
 
 	if( this.chargingTail ) {
 		this.chargeTailTween.end();
 	}
 
-	this.vx *= this.drag;
+	/*this.vx *= this.drag;
 	this.vy *= this.drag;
 
 	this.x += this.vx;
-	this.y += this.vy;
+	this.y += this.vy;*/
 };
 
 $.hero.prototype.charge = function( x, y ) {
@@ -221,7 +221,7 @@ $.hero.prototype.charge = function( x, y ) {
 		this.chargeTailTween.end();
 	}
 	//this.chargeTailTween = $.game.tween( this.chargeTail ).to( { x: x, y: y }, 0.5, 'inExpo' );
-	this.chargeTailTween = $.game.tween( this.chargeTail ).to( { x: x, y: y }, 1.4, 'outExpo' );
+	this.chargeTailTween = $.game.tween( this.chargeTail ).to( { x: x, y: y }, 1.8, 'outExpo' );
 
 	var dx = x - this.x,
 		dy = y - this.y;
@@ -283,12 +283,26 @@ $.hero.prototype.checkScreenCollision = function( x, y ) {
 };
 
 $.hero.prototype.checkWallCollision = function( x, y, through ) {
+	var foundCollision = false;
+
 	for( var i = 0; i < $.game.state.walls.length; i++ ) {
 		var wall = $.game.state.walls.alive[ i ];
 		if( $.pointInRect( x, y, wall.x, wall.y, wall.w, wall.h ) ) {
 			wall.clickTick = wall.clickTickMax;
-			return true;
+			foundCollision = true;
 		}
+	}
+
+	if( foundCollision ) {
+		return true;
+	}
+
+	for( var i = 0; i < $.game.state.walls.length; i++ ) {
+		var wall = $.game.state.walls.alive[ i ];
+		/*if( $.pointInRect( x, y, wall.x, wall.y, wall.w, wall.h ) ) {
+			wall.clickTick = wall.clickTickMax;
+			return true;
+		}*/
 
 		if( through ) {
 			var tl = { x: wall.x, y: wall.y },
@@ -311,7 +325,6 @@ $.hero.prototype.checkWallCollision = function( x, y, through ) {
 				return true;
 			}
 		}
-
 	}
 	return false;
 };
