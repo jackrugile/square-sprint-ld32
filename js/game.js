@@ -6,9 +6,13 @@ $.game = playground({
 });
 
 $.game.create = function() {
+	this.tick = 0;
+	this.clearColor = '#222';
+
 	this.loadImages(
 		'screen-overlay',
-		'light'
+		'light',
+		'title'
 	);
 
 	this.loadSounds(
@@ -54,11 +58,23 @@ $.game.ready = function() {
 		this.data[ 'level10-30x20-30' ]
 	];
 
-	this.setState( $.statePlay );
+	this.setState( $.stateMenu );
 };
 
 $.game.step = function( dt ) {
+	this.tick++;
 };
 
-$.game.step = function( dt ) {
+$.game.renderCursor = function() {
+	var scale = 1 + Math.sin( this.tick * 0.1 ) * 0.25;
+	$.ctx.save();
+	$.ctx.translate( this.mouse.x, this.mouse.y );
+	$.ctx.scale( scale, scale );
+	$.ctx.rotate( this.tick * 0.05 );
+	$.ctx.lineWidth( 1 );
+	$.ctx.strokeStyle( '#fff');
+	$.ctx.strokeRect( -8, -8, 16, 16 );
+	$.ctx.fillStyle( '#fff' );
+	$.ctx.fillCircle( 0, 0, 1 );
+	$.ctx.restore();
 };

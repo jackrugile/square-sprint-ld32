@@ -78,7 +78,9 @@ $.hero.prototype.step = function() {
 					y: y,
 					vx: Math.cos( angle ) * speed,
 					vy: Math.sin( angle ) * speed,
-					decay: 0.01
+					decay: 0.01,
+					hue: $.game.state.level.hue,
+					desaturated: false
 				});
 			}
 		}
@@ -90,7 +92,9 @@ $.hero.prototype.step = function() {
 			y: this.y + $.rand( -this.radius, this.radius ),
 			vx: -this.vx * 0.2 + $.rand( -0.5, 0.5 ),
 			vy: -this.vy * 0.2 + $.rand( -0.5, 0.5 ),
-			decay: 0.02
+			decay: 0.02,
+			hue: $.game.state.level.hue,
+			desaturated: false
 		});
 	}
 
@@ -134,7 +138,7 @@ $.hero.prototype.render = function() {
 		$.ctx.fill();
 
 		$.ctx.beginPath();
-		$.ctx.arc( this.x + $.rand( -3, 3 ), this.y + $.rand( -3, 3 ), Math.max( 0, this.radius * 3 + $.rand( -10, 10 ) ), this.chargeTweenAngle - Math.PI * 0.4 + $.rand( -0.2, 0.2 ), this.chargeTweenAngle + Math.PI * 0.4 + $.rand( -0.2, 0.2 ), false );
+		$.ctx.arc( this.x + $.rand( -1, 1 ), this.y + $.rand( -1, 1 ), Math.max( 0, this.radius * 3 + $.rand( -5, 5 ) ), this.chargeTweenAngle - Math.PI * 0.4 + $.rand( -0.1, 0.1 ), this.chargeTweenAngle + Math.PI * 0.4 + $.rand( -0.1, 0.1 ), false );
 		$.ctx.lineWidth( $.rand( 1, 2 ) );
 		$.ctx.strokeStyle( 'hsla(' + $.game.state.level.hue + ', 100%, ' + $.rand( 50, 90 ) + '%, ' + $.rand( 0.05, 0.25 ) + ')' );
 		$.ctx.stroke();
@@ -217,7 +221,7 @@ $.hero.prototype.charge = function( x, y ) {
 		this.chargeTailTween.end();
 	}
 	//this.chargeTailTween = $.game.tween( this.chargeTail ).to( { x: x, y: y }, 0.5, 'inExpo' );
-	this.chargeTailTween = $.game.tween( this.chargeTail ).to( { x: x, y: y }, 1.2, 'outExpo' );
+	this.chargeTailTween = $.game.tween( this.chargeTail ).to( { x: x, y: y }, 1.4, 'outExpo' );
 
 	var dx = x - this.x,
 		dy = y - this.y;

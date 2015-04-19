@@ -36,6 +36,8 @@ $.enemy.prototype.step = function() {
 	}*/
 
 	if( this.dead && this.deathTick<= 0 ) {
+		$.game.state.shake.translate = $.rand( 3, 7 );
+		$.game.state.shake.rotate = $.rand( 0, 0.025 );
 		$.game.state.level.killed++;
 		$.game.state.enemies.release( this );
 	}
@@ -46,11 +48,12 @@ $.enemy.prototype.render = function() {
 	$.ctx.save();
 	$.ctx.translate( this.x + this.w / 2 , this.y + this.h / 2 );
 	$.ctx.scale( scale, scale );
+	$.ctx.translate( -this.x - this.w / 2 , -this.y - this.h / 2 );
 	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 80%, 55%, 1)' );
-	$.ctx.fillRect( -this.w / 2, -this.h / 2, this.w, this.h );
+	$.ctx.fillRect( this.x, this.y, this.w, this.h );
 	if( this.deathTick ) {
 		$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
-		$.ctx.fillRect( -this.w / 2, -this.h / 2, this.w, this.h );
+		$.ctx.fillRect( this.x, this.y, this.w, this.h );
 	}
 	$.ctx.restore();
 };

@@ -2,6 +2,17 @@ $.statePlay = {};
 
 $.statePlay.create = function() {
 	this.lightPosition = { x: 0, y: 0 };
+
+	/*this.screenShakeDuration = 0;
+	this.screenShakeDurationMax = 30;
+	this.screenShakeAmplitude = 0;
+	this.screenShakeAmplitudeMax = 30;*/
+
+	this.shake = {
+		translate: 0,
+		rotate: 0
+	};
+
 	this.level = null;
 	this.levelNumber = location.hash ? parseInt( location.hash.substring( 1 ) ) : 1;
 	this.levelTotal = $.levels.length;
@@ -30,32 +41,36 @@ $.statePlay.step = function( dt ) {
 	this.lightPosition.x += ( this.hero.x - 900 - this.lightPosition.x ) * 0.1;
 	this.lightPosition.y += ( this.hero.y - 600 - this.lightPosition.y ) * 0.1;
 
+	if( this.shake.translate > 0 ) {
+		this.shake.translate *= 0.9;
+	}
+	if( this.shake.rotate > 0 ) {
+		this.shake.rotate *= 0.9;
+	}
+
 	this.tick++;
 };
 
 $.statePlay.render = function( dt ) {
-	$.ctx.clear( '#222' );
+	$.ctx.clear( $.game.clearColor );
 
+	$.ctx.save();
+	if( this.shake.translate || this.shake.rotate ) {
+		$.ctx.translate( $.game.width / 2 + $.rand( -this.shake.translate, this.shake.translate ), $.game.height / 2 + $.rand( -this.shake.translate, this.shake.translate ) );
+		$.ctx.rotate( $.rand( -this.shake.rotate, this.shake.rotate ) );
+		$.ctx.translate( -$.game.width / 2 + $.rand( -this.shake.translate, this.shake.translate ) , -$.game.height / 2 + $.rand( -this.shake.translate, this.shake.translate ));
+	}
 	this.walls.each( 'render' );
 	this.enemies.each( 'render' );
 	this.particles.each( 'render' );
 	this.pings.each( 'render' );
 	this.hero.render();
+	$.ctx.restore();
 
 	$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
 	$.ctx.fillRect( 0, $.game.height - 1, this.level.progress * $.game.width, 1 );
 
-	var scale = 1 + Math.sin( this.tick * 0.1 ) * 0.25;
-	$.ctx.save();
-	$.ctx.translate( $.game.mouse.x, $.game.mouse.y );
-	$.ctx.scale( scale, scale );
-	$.ctx.rotate( this.tick * 0.05 );
-	$.ctx.lineWidth( 1 );
-	$.ctx.strokeStyle( '#fff');
-	$.ctx.strokeRect( -8, -8, 16, 16 );
-	$.ctx.fillStyle( '#fff' );
-	$.ctx.fillCircle( 0, 0, 1 );
-	$.ctx.restore();
+	$.game.renderCursor();
 
 	$.ctx.drawImage( $.game.images[ 'light' ], this.lightPosition.x, this.lightPosition.y );
 

@@ -29,7 +29,7 @@ PLAYGROUND.Transitions.prototype = {
 
 		if (this.progress >= 1) return;
 
-		PLAYGROUND.Transitions.Explode(this, this.progress);
+		PLAYGROUND.Transitions.Split(this, this.progress);
 
 	},
 
@@ -92,11 +92,10 @@ PLAYGROUND.Transitions.Split = function(manager, progress) {
 
 	layer.save();
 
-	layer.a(negative).clear("#fff").ra();
+	layer.a(negative).clear("#000").ra();
 
 	layer.drawImage(manager.screenshot, 0, 0, app.width, app.height / 2 | 0, 0, 0, app.width, negative * app.height / 2 | 0);
 	layer.drawImage(manager.screenshot, 0, app.height / 2 | 0, app.width, app.height / 2 | 0, 0, app.height / 2 + progress * app.height / 2 + 1 | 0, app.width, Math.max(1, negative * app.height * 0.5 | 0));
 
 	layer.restore();
-
 };
