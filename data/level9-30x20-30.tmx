@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="30" height="20" tilewidth="1" tileheight="1">
+ <properties>
+  <property name="hue" value="0"/>
+  <property name="size" value="30"/>
+ </properties>
+ <tileset firstgid="1" name="basic" tilewidth="1" tileheight="1">
+  <image source="tileset.png" width="5" height="1"/>
+  <tile id="0">
+   <properties>
+    <property name="hue" value="0"/>
+    <property name="size" value="30"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Tile Layer 1" width="30" height="20">
+  <data encoding="base64" compression="zlib">
+   eJy9lEsOAzEIQ/Pp/c/cTStZrzYwmy5Q1UywATvctdb5xP1jHPy62BIH/9NZFV++ql+9qxwH5xtYvEfeKshJbn674Q5zu/lTA/biatvrd34626pfzSOm45nksd7pbN195xnFZ16Hk/p0mO7c9UYvTjkVs3trKag7fUIc1S69v1Q3NaYfLjDSrJT3ZXiT75ze7Dftn0m/rkc3g8rrk1pcpLfg/J34uh2V8Lsd0+01p7fbw0kTx5X0fTrHiYeq/ebwJ/vJ6VDlTvZ21y/9nDRQvVItyevdG6v0Tv26HZu43RyfxhvuawSD
+  </data>
+ </layer>
+</map>
