@@ -12,7 +12,9 @@ $.game.create = function() {
 	this.loadImages(
 		'screen-overlay',
 		'light',
-		'title'
+		'title',
+		'left-mouse',
+		'right-mouse'
 	);
 
 	this.loadSounds(
@@ -34,7 +36,25 @@ $.game.create = function() {
 	this.loadData( 'level10-30x20-30' );
 	this.loadData( 'test-level' );
 
-	$.lastRoundTime = 0;
+	this.lastRoundTime = 0;
+	this.lastRoundClicks = 0;
+
+	// setup local storage
+	$.storage = new $.storage( 'square-sprint' );
+
+	// setup storage defaults if they don't exist
+	if( $.isObjEmpty( $.storage.obj ) ) {
+		$.storage.set( 'fastestRun', 0 );
+		$.storage.set( 'totalTime', 0 );
+		$.storage.set( 'totalClicks', 0 );
+		$.storage.set( 'mute', 0 );
+	}
+
+	if( $.storage.get( 'mute' ) ) {
+		this.sound.setMaster( 0 );
+	} else {
+		this.sound.setMaster( 1 );
+	}
 
 	$.ctx = this.layer;
 };
@@ -81,4 +101,17 @@ $.game.renderCursor = function() {
 	$.ctx.fillStyle( '#fff' );
 	$.ctx.fillCircle( 0, 0, 1 );
 	$.ctx.restore();
+};
+
+$.game.keydown = function( e ) {
+	if( e.key == 'm' ) {
+		var muted = $.storage.get( 'mute' );
+		if( muted ) {
+			$.storage.set( 'mute', 0 );
+			this.sound.setMaster( 1 );
+		} else {
+			$.storage.set( 'mute', 1 );
+			this.sound.setMaster( 0 );
+		}
+	}
 };

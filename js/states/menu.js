@@ -6,6 +6,13 @@ $.stateMenu.create = function() {
 $.stateMenu.enter = function() {
 	this.tick = 0;
 	this.particles = new $.pool( $.particle, 100 );
+	this.button = {
+		x: 340,
+		y: 440,
+		w: 220,
+		h: 80
+	};
+	this.hoveringButton = false;
 };
 
 $.stateMenu.exit = function() {
@@ -28,6 +35,12 @@ $.stateMenu.step = function( dt ) {
 			desaturated: true
 		});
 	}
+
+	if( $.pointInRect( $.game.mouse.x, $.game.mouse.y, this.button.x, this.button.y, this.button.w, this.button.h ) ) {
+		this.hoveringButton = true;
+	} else {
+		this.hoveringButton = false;
+	}
 };
 
 $.stateMenu.render = function( dt ) {
@@ -43,25 +56,26 @@ $.stateMenu.render = function( dt ) {
 	$.ctx.textAlign( 'right' );
 	$.ctx.fillStyle( '#fff' );
 	$.ctx.fillText( 'BUILT FOR LUDUM DARE 32', 280, 445 );
-	$.ctx.fillStyle( '#bbb' );
 	$.ctx.fillText( 'AN UNCONVENTIONAL WEAPON', 280, 470 );
-	$.ctx.fillStyle( '#888' );
 	$.ctx.fillText( 'MADE BY JACK RUGILE', 280, 495 );
 	
 	$.ctx.textAlign( 'left' );
-	$.ctx.fillStyle( '#fff' );
-	$.ctx.fillText( 'FASTEST RUN / 00:00', 620, 445 );
-	$.ctx.fillStyle( '#bbb' );
-	$.ctx.fillText( 'TOTAL TIME / 00:00:00', 620, 470 );
-	$.ctx.fillStyle( '#888' );
-	$.ctx.fillText( 'TOTAL CLICKS / 0', 620, 495 );
+	$.ctx.fillText( 'FASTEST RUN / ' + $.msToString( $.storage.get( 'fastestRun' ) * 1000 ), 620, 445 );
+	$.ctx.fillText( 'TOTAL TIME / ' + $.msToString( $.storage.get( 'totalTime' ) * 1000 ), 620, 470 );
+	$.ctx.fillText( 'TOTAL CLICKS / ' + $.formatCommas( $.storage.get( 'totalClicks' ) ), 620, 495 );
 
-	$.ctx.fillStyle( '#fff' );
-	$.ctx.fillRect( 340, 440, 220, 80 );
 	$.ctx.font( '40px droidsansmono' );
 	$.ctx.textAlign( 'center' );
-	$.ctx.fillStyle( '#222' );
-	$.ctx.fillText( 'Play', $.game.width / 2, 452 );
+	if( this.hoveringButton ) {
+		$.ctx.fillStyle( 'hsla(120, 70%, 50%, 1)' );
+		$.ctx.fillRect( this.button.x, this.button.y, this.button.w, this.button.h );
+		$.ctx.fillStyle( '#fff' );
+	} else {
+		$.ctx.fillStyle( '#fff' );
+		$.ctx.fillRect( this.button.x, this.button.y, this.button.w, this.button.h );
+		$.ctx.fillStyle( '#222' );
+	}
+	$.ctx.fillText( 'PLAY', $.game.width / 2, 452 );
 
 
 	$.ctx.drawImage( $.game.images[ 'light' ], $.game.width / 2 - 900 + Math.sin( this.tick / 150 ) * 300, $.game.height / 2 - 700 + Math.cos( this.tick / 175 ) * 75 );
@@ -70,5 +84,7 @@ $.stateMenu.render = function( dt ) {
 };
 
 $.stateMenu.mousedown = function( e ) {
-	$.game.setState( $.statePlay );
+	if( this.hoveringButton ) {
+		$.game.setState( $.stateTutorial );
+	}
 };

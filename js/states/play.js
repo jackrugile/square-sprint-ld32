@@ -25,9 +25,10 @@ $.statePlay.enter = function() {
 	this.generateLevel( this.levelNumber );
 
 	this.endStateTick = 0;
-	this.endStateTickMax = 100;
+	this.endStateTickMax = 60;
 
 	this.elapsed = 0;
+	this.totalClicks = 0;
 
 	this.leftState = false;
 }
@@ -59,9 +60,11 @@ $.statePlay.step = function( dt ) {
 			this.generateLevel( this.levelNumber );
 		} else {
 			if( this.endStateTick >= this.endStateTickMax ) {
-				$.lastRoundTime = this.elapsed;
+				$.game.lastRoundTime = this.elapsed;
+				$.game.lastRoundClicks = this.totalClicks;
 				$.game.setState( $.stateVictory );
 			} else {
+				this.shake.translate += 0.2;
 				this.endStateTick++;
 			}
 		}
@@ -122,6 +125,11 @@ $.statePlay.render = function( dt ) {
 		$.ctx.restore();
 	}
 
+	if( this.endStateTick > 0 ) {
+		$.ctx.fillStyle( 'hsla(0, 0%, 100%, ' + ( this.endStateTick / this.endStateTickMax ) + ')' );
+		$.ctx.fillRect( 0, 0, $.game.width, $.game.height );
+	}
+
 	$.ctx.fillStyle( this.uiGrad );
 	$.ctx.fillRect( 0, $.game.height, $.game.width, -29 );
 
@@ -146,6 +154,7 @@ $.statePlay.mousedown = function( e ) {
 	} else if( e.button == 'right' ) {
 		this.hero.warp( e.x, e.y );
 	}
+	this.totalClicks++;
 };
 
 $.statePlay.keydown = function( e ) {
