@@ -1,25 +1,49 @@
 $.statePlay = {};
 
 $.statePlay.create = function() {
-	this.lightPosition = { x: 0, y: 0 };
+	this.uiGrad = $.ctx.createLinearGradient( 0, 0, $.game.width, 0 );
+	this.uiGrad .addColorStop( 0, 'hsla(0, 0%, 0%, 0.6)' );
+	this.uiGrad .addColorStop( 0.2, 'hsla(0, 0%, 0%, 0)' );
+	this.uiGrad .addColorStop( 0.8, 'hsla(0, 0%, 0%, 0)' );
+	this.uiGrad .addColorStop( 1, 'hsla(0, 0%, 0%, 0.6)' );
+};
 
-	/*this.screenShakeDuration = 0;
-	this.screenShakeDurationMax = 30;
-	this.screenShakeAmplitude = 0;
-	this.screenShakeAmplitudeMax = 30;*/
+$.statePlay.enter = function() {
+	this.lightPosition = { x: 0, y: 0 };
 
 	this.shake = {
 		translate: 0,
 		rotate: 0
 	};
 
+	this.levelFlashTick = 0;
+	this.levelFlashTickMax = 100;
+
 	this.level = null;
 	this.levelNumber = location.hash ? parseInt( location.hash.substring( 1 ) ) : 1;
 	this.levelTotal = $.levels.length;
 	this.generateLevel( this.levelNumber );
+
+	this.endStateTick = 0;
+	this.endStateTickMax = 100;
+
+	this.elapsed = 0;
+
+	this.leftState = false;
+}
+
+$.statePlay.exit = function() {
+	this.leftState = true;
+	this.cleanUpLevel();
 };
 
 $.statePlay.step = function( dt ) {
+	if( this.leftState ) {
+		return;
+	}
+
+	this.elapsed += dt;
+
 	this.walls.each( 'step' );
 	this.enemies.each( 'step' );
 	this.particles.each( 'step' );
@@ -34,24 +58,38 @@ $.statePlay.step = function( dt ) {
 			this.levelNumber++;
 			this.generateLevel( this.levelNumber );
 		} else {
-			console.log( 'you win!' );
+			if( this.endStateTick >= this.endStateTickMax ) {
+				$.lastRoundTime = this.elapsed;
+				$.game.setState( $.stateVictory );
+			} else {
+				this.endStateTick++;
+			}
 		}
 	}
 
-	this.lightPosition.x += ( this.hero.x - 900 - this.lightPosition.x ) * 0.1;
-	this.lightPosition.y += ( this.hero.y - 600 - this.lightPosition.y ) * 0.1;
+	this.lightPosition.x += ( this.hero.x - 900 - this.lightPosition.x ) * 0.2;
+	this.lightPosition.y += ( this.hero.y - 600 - this.lightPosition.y ) * 0.2;
 
 	if( this.shake.translate > 0 ) {
 		this.shake.translate *= 0.92;
 	}
+
 	if( this.shake.rotate > 0 ) {
 		this.shake.rotate *= 0.92;
 	}
+
+	if( this.levelFlashTick > 0 ) {
+		this.levelFlashTick *= 0.92;
+	}
+
 
 	this.tick++;
 };
 
 $.statePlay.render = function( dt ) {
+	if( this.leftState ) {
+		return;
+	}
 	$.ctx.clear( $.game.clearColor );
 
 	$.ctx.save();
@@ -67,14 +105,39 @@ $.statePlay.render = function( dt ) {
 	this.hero.render();
 	$.ctx.restore();
 
-	$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
-	$.ctx.fillRect( 0, $.game.height - 1, this.level.progress * $.game.width, 1 );
-
-	$.game.renderCursor();
-
 	$.ctx.drawImage( $.game.images[ 'light' ], this.lightPosition.x, this.lightPosition.y );
 
+	if( this.levelFlashTick > 0.005 ) {
+		$.ctx.fillStyle( 'hsla(0, 0%, 100%, ' + ( this.levelFlashTick / this.levelFlashTickMax ) + ')' );
+		$.ctx.fillRect( 0, 0, $.game.width, $.game.height );
+		$.ctx.save();
+		$.ctx.translate( $.game.width / 2, $.game.height / 2 );
+		var scale = 3 - ( this.levelFlashTick / this.levelFlashTickMax ) * 2;
+		$.ctx.scale( scale, scale );
+		$.ctx.font( '100px droidsansmono' );
+		$.ctx.textBaseline( 'top' );
+		$.ctx.textAlign( 'center' );
+		$.ctx.fillStyle( 'hsla(' + this.level.hue + ', 90%, ' + ( 90 - ( this.levelFlashTick / this.levelFlashTickMax ) * 40 ) + '%, ' + ( this.levelFlashTick / ( this.levelFlashTickMax / 3 ) ) + ')' );
+		$.ctx.fillText( this.levelNumber, 0, -75 );
+		$.ctx.restore();
+	}
+
+	$.ctx.fillStyle( this.uiGrad );
+	$.ctx.fillRect( 0, $.game.height, $.game.width, -29 );
+
+	$.ctx.font( '12px droidsansmono' );
+	$.ctx.textBaseline( 'top' );
+	$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
+	$.ctx.textAlign( 'left' );
+	$.ctx.fillText( 'TIME ' + $.msToString( this.elapsed * 1000 ), 14, 577 );
+	$.ctx.textAlign( 'right' );
+	$.ctx.fillText( 'LEVEL ' + this.levelNumber + '/' + this.levelTotal, $.game.width - 14, 577 );
+
 	$.ctx.drawImage( $.game.images[ 'screen-overlay' ], 0, 0 );
+	$.game.renderCursor();
+
+	$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
+	$.ctx.fillRect( 0, $.game.height - 1, this.level.progress * $.game.width, 1 );
 };
 
 $.statePlay.mousedown = function( e ) {
@@ -85,8 +148,16 @@ $.statePlay.mousedown = function( e ) {
 	}
 };
 
+$.statePlay.keydown = function( e ) {
+	if( e.key == 'escape' ) {
+		$.game.setState( $.stateMenu );
+	}
+};
+
 $.statePlay.generateLevel = function( level ) {
 	this.tick = 0;
+
+	this.levelFlashTick = this.levelFlashTickMax;
 
 	this.level = {};
 	this.level.data = $.levels[ level - 1 ];

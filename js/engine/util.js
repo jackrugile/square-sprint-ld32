@@ -103,7 +103,12 @@ $.msToString = function( ms ) {
 	var minutes = parseInt( x % 60 );
 	x /= 60;
 	var hours = parseInt( x % 24 );
-	return $.pad( hours, 2) + ':' + $.pad( minutes, 2) + ':' + $.pad( seconds, 2);
+
+	if( hours < 1 ) {
+		return $.pad( minutes, 2) + ':' + $.pad( seconds, 2);
+	} else {
+		return $.pad( hours, 2) + ':' + $.pad( minutes, 2) + ':' + $.pad( seconds, 2);
+	}
 };
 
 /*==============================================================================

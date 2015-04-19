@@ -32,6 +32,9 @@ $.game.create = function() {
 	this.loadData( 'level8-18x12-50' );
 	this.loadData( 'level9-30x20-30' );
 	this.loadData( 'level10-30x20-30' );
+	this.loadData( 'test-level' );
+
+	$.lastRoundTime = 0;
 
 	$.ctx = this.layer;
 };
@@ -55,7 +58,8 @@ $.game.ready = function() {
 		this.data[ 'level7-18x12-50' ],
 		this.data[ 'level8-18x12-50' ],
 		this.data[ 'level9-30x20-30' ],
-		this.data[ 'level10-30x20-30' ]
+		this.data[ 'level10-30x20-30' ],
+		this.data[ 'test-level' ]
 	];
 
 	this.setState( $.stateMenu );

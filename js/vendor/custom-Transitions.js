@@ -29,7 +29,7 @@ PLAYGROUND.Transitions.prototype = {
 
 		if (this.progress >= 1) return;
 
-		PLAYGROUND.Transitions.Split(this, this.progress);
+		PLAYGROUND.Transitions.Explode(this, this.progress);
 
 	},
 
@@ -68,15 +68,17 @@ PLAYGROUND.Transitions.Explode = function(manager, progress) {
 	var app = manager.app;
 	var layer = app.layer;
 
-	progress = app.ease(progress, "inOutCubic");
+	progress = app.ease(progress, "outExpo");
 
-	var scale = 1 + progress * 2;
+	var scale = 1 + progress * 1;
 
 	
 	layer.save();
 	layer.a(1-progress);
 	layer.tars(app.center.x, app.center.y, 0.5, 0.5, 0, scale, scale);
 	layer.drawImage(manager.screenshot, 0, 0);
+	layer.fillStyle( 'rgba(255, 255, 255, 0.5)' );
+	layer.fillRect( 0, 0, app.width, app.height );
 	layer.restore();
 
 };
