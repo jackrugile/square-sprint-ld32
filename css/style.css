@@ -8,5 +8,6 @@ body {
 }
 
 canvas {
+	box-shadow: 0 0 0 2px #1c1c1c;
 	cursor: none;
 }

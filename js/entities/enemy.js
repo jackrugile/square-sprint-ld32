@@ -12,8 +12,8 @@ $.enemy.prototype.init = function( opt ) {
 
 $.enemy.prototype.step = function() {
 	if( this.dead ) {
-		this.vy += 1;
-		this.y += this.vy;
+		//this.vy += 1;
+		//this.y += this.vy;
 	} else {
 		this.tick++;
 	}
@@ -22,31 +22,45 @@ $.enemy.prototype.step = function() {
 		this.deathTick--;
 	}
 
-	if( !this.dead /*&& $.game.state.hero.chargingTail*/ && this.checkCollision() ) {
-		//$.game.state.enemies.release( this );
+	if( !this.dead && this.checkCollision() ) {
 		this.dead = true;
 		this.deathTick = this.deathTickMax;
-		this.vy = 3;
+		//this.vy = 3;
 		var sound = $.game.playSound( 'explode1' );
 		$.game.sound.setPlaybackRate( sound, 0.9 + $.rand( -0.1, 0.1 ) );
 	}
 
-	if( this.x + this.w < 0 || ( this.dead && this.y > $.game.height ) ) {
+	/*if( this.x + this.w < 0 || ( this.dead && this.y > $.game.height ) ) {
+		$.game.state.enemies.release( this );
+	}*/
+
+	if( this.dead && this.deathTick<= 0 ) {
 		$.game.state.enemies.release( this );
 	}
 };
 
 $.enemy.prototype.render = function() {
-	$.ctx.fillStyle( this.dead ? 'hsla(0, 10%, 30%, 1)' : 'hsla(0, 90%, 60%, 1)' );
-	$.ctx.fillRect( this.x, this.y, this.w, this.h );
+	var scale = 0.95 + Math.sin( $.game.lifetime * 4 ) * 0.05;
+	$.ctx.save();
+	$.ctx.translate( this.x + this.w / 2 , this.y + this.h / 2 );
+	$.ctx.scale( scale, scale );
+	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 30%, 15%, 1)' );
+	$.ctx.fillRect( -this.w / 2, -this.h / 2, this.w, this.h );
+	$.ctx.restore();
+
+	var scale = 0.75 + Math.cos( $.game.lifetime * 4 ) * 0.25;
+	$.ctx.save();
+	$.ctx.translate( this.x + this.w / 2 , this.y + this.h / 2 );
+	$.ctx.scale( scale, scale );
+	$.ctx.rotate( $.game.lifetime * 2 );
+	$.ctx.fillStyle( 'hsla(' + ( $.game.state.level.hue ) + ', 70%, 60%, 1)' );
+	$.ctx.fillRect(	-4, -4, 8, 8 );
+	$.ctx.restore();
 
 	if( this.deathTick ) {
 		$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
 		$.ctx.fillRect( this.x, this.y, this.w, this.h );
 	}
-
-	$.ctx.fillStyle( 'hsla(0, 0%, 100%, 1)' );
-	$.ctx.fillRect( $.game.state.hero.x - $.game.state.hero.diag, $.game.state.hero.y - $.game.state.hero.diag, $.game.state.hero.diag * 2, $.game.state.hero.diag * 2 );
 };
 
 $.enemy.prototype.checkCollision = function() {
@@ -57,7 +71,7 @@ $.enemy.prototype.checkCollision = function() {
 		h1 = { x: $.game.state.hero.x, y: $.game.state.hero.y },
 		h2 = { x: $.game.state.hero.ox, y: $.game.state.hero.oy };
 
-		// slight compensation to make killing easier
+	// slight compensation to make killing easier
 	var aabb = $.collide(
 		this,
 		{

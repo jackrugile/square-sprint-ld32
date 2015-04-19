@@ -2,29 +2,33 @@ $.statePlay = {};
 
 $.statePlay.create = function() {
 	this.tick = 0;
-	this.hero = new $.hero();
+	this.walls = new $.pool( $.wall, 100 );
+	this.enemies = new $.pool( $.enemy, 100 );
 	this.particles = new $.pool( $.particle, 300 );
 	this.pings = new $.pool( $.ping, 100 );
-	this.enemies = new $.pool( $.enemy, 100 );
+	this.hero = new $.hero();
 
-	this.generateLevel( 1 );
+	this.level = null;
+	this.generateLevel( 2 );
 };
 
 $.statePlay.step = function( dt ) {
+	this.walls.each( 'step' );
+	this.enemies.each( 'step' );
 	this.particles.each( 'step' );
 	this.pings.each( 'step' );
-	this.enemies.each( 'step' );
 	this.hero.step();
 	this.tick++;
 };
 
 $.statePlay.render = function( dt ) {
-	//$.ctx.clear( 'hsla(' + this.hero.hue + ', 10%, 10%, 1)' );
-	$.ctx.clear( '#181818' );
+	$.ctx.clear( '#000' );
+	$.ctx.lineWidth( 4 );
 
+	this.walls.each( 'render' );
+	this.enemies.each( 'render' );
 	this.particles.each( 'render' );
 	this.pings.each( 'render' );
-	this.enemies.each( 'render' );
 	this.hero.render();
 
 	var scale = 1 + Math.sin( this.tick * 0.1 ) * 0.25;
@@ -33,7 +37,7 @@ $.statePlay.render = function( dt ) {
 	$.ctx.scale( scale, scale );
 	$.ctx.rotate( this.tick * 0.05 );
 	$.ctx.lineWidth( 1 );
-	$.ctx.strokeStyle( 'hsla(' + this.hero.hue + ', 100%, 70%, 0.5)' );
+	$.ctx.strokeStyle( '#fff');
 	$.ctx.strokeRect( -8, -8, 16, 16 );
 	$.ctx.fillStyle( '#fff' );
 	$.ctx.fillCircle( 0, 0, 1 );
@@ -49,28 +53,48 @@ $.statePlay.mousedown = function( e ) {
 };
 
 $.statePlay.generateLevel = function( level ) {
-	var level = $.levels[ level - 1 ],
-		size = parseInt( level.properties.size ),
-		map = level.layers[ 0 ].data,
-		width = level.width,
-		height = level.height,
-		padding = 10;
+	this.level = {};
+	this.level.data = $.levels[ level - 1 ];
+	this.level.size = parseInt( this.level.data.properties.size );
+	this.level.map = this.level.data.layers[ 0 ].data;
+	this.level.width = this.level.data.width;
+	this.level.height = this.level.data.height;
+	this.level.hue = this.level.data.properties.hue;
+	this.level.padding = 10;
 
-	for( var row = 0; row < height; row++ ) {
-		for( var col = 0; col < width; col++ ) {
-			var value = map[ ( row * width ) + col ];
-			//console.log( value );
-			//if( $.mapKey[ value ] == 'enemy' ) {
-				//console.log( row );
-				var enemy = this.enemies.create({
-					x: col * size + padding / 2,
-					y: row * size + padding / 2,
-					w: size - padding,
-					h: size - padding
+	for( var row = 0; row < this.level.height; row++ ) {
+		for( var col = 0; col < this.level.width; col++ ) {
+			var value = this.level.map[ ( row * this.level.width ) + col ] - 1;
+			
+			// empty
+			if( $.mapKey[ value ] == 'empty' ) {
+			}
+
+			// wall
+			if( $.mapKey[ value ] == 'wall' ) {
+				this.walls.create({
+					x: col * this.level.size,
+					y: row * this.level.size,
+					w: this.level.size,
+					h: this.level.size
 				});
-				console.log( enemy );
+			}
 
-			//}
+			// enemy
+			if( $.mapKey[ value ] == 'enemy' ) {
+				this.enemies.create({
+					x: col * this.level.size,
+					y: row * this.level.size,
+					w: this.level.size,
+					h: this.level.size
+				});
+			}
+
+			// hero start
+			if( $.mapKey[ value ] == 'start' ) {
+				this.hero.x = col * this.level.size + this.level.size / 2;
+				this.hero.y = row * this.level.size + this.level.size / 2;
+			}
 		}
 	}
 }

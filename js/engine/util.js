@@ -25,6 +25,11 @@ $.distance = function( p1x, p1y, p2x, p2y ) {
 };
 
 // credit: Keith Peters - https://github.com/bit101/CodingMath
+$.inRange = function( value, min, max ) {
+	return value >= Math.min( min, max ) && value <= Math.max( min, max );
+};
+
+// credit: Keith Peters - https://github.com/bit101/CodingMath
 $.rangeIntersect = function( min0, max0, min1, max1 ) {
 	return Math.max( min0, max0 ) >= Math.min( min1, max1 ) && Math.min( min0, max0 ) <= Math.max( min1, max1 );
 };
@@ -32,6 +37,11 @@ $.rangeIntersect = function( min0, max0, min1, max1 ) {
 // credit: Keith Peters - https://github.com/bit101/CodingMath
 $.collide = function( r0, r1 ) {
 	return $.rangeIntersect( r0.x, r0.x + r0.w, r1.x, r1.x + r1.w ) && $.rangeIntersect( r0.y, r0.y + r0.h, r1.y, r1.y + r1.h );
+};
+
+// credit: Keith Peters - https://github.com/bit101/CodingMath
+$.pointInRect = function( px, py, rx, ry, rw, rh ) {
+	return $.inRange( px, rx, rx + rw ) && $.inRange( py, ry, ry + rh );
 };
 
 // credit: Keith Peters - https://github.com/bit101/CodingMath
@@ -65,7 +75,7 @@ $.segmentIntersect = function( p0, p1, p2, p3 ) {
 	else {
 		return null;
 	}
-}
+};
 
 /*==============================================================================
 Formatting

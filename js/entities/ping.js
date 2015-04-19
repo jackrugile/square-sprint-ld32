@@ -22,8 +22,8 @@ $.ping.prototype.step = function() {
 
 $.ping.prototype.render = function() {
 	$.ctx.lineWidth( 2 )
-	$.ctx.fillStyle( 'hsla(' + $.game.state.hero.hue + ', 90%, 10%, ' + ( 1 - this.tween.progress ) + ')' );
+	$.ctx.fillStyle( 'hsla(' + $.game.state.level.hue + ', 90%, 10%, ' + ( 1 - this.tween.progress ) + ')' );
 	$.ctx.fillCircle( this.x, this.y, Math.max( 0, this.radius ) );
-	$.ctx.strokeStyle( 'hsla(' + $.game.state.hero.hue + ', 90%, 70%, ' + ( 1 - this.tween.progress ) + ')' );
+	$.ctx.strokeStyle( 'hsla(' + $.game.state.level.hue + ', 90%, 70%, ' + ( 1 - this.tween.progress ) + ')' );
 	$.ctx.strokeCircle( this.x, this.y, Math.max( 0, this.radius ) );
 };
