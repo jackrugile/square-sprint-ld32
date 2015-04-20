@@ -28,8 +28,9 @@ $.enemy.prototype.step = function() {
 		this.deathTick = this.deathTickMax;
 		this.vy = 3;
 		var sound = $.game.playSound( 'explode1' );
-		$.game.sound.setVolume( sound, 0.5 );
+		$.game.sound.setVolume( sound, 0.4 );
 		$.game.sound.setPlaybackRate( sound, 0.8 + $.rand( -0.2, 0.2 ) );
+		$.game.state.enemyFlashTick = $.game.state.enemyFlashTickMax;
 	}
 
 	if( this.dead && this.y > $.game.height ) {

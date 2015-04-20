@@ -18,10 +18,12 @@ $.game.create = function() {
 	);
 
 	this.loadSounds(
+		'music',
 		'warp1',
 		'charge1',
 		'explode1',
-		'error1'
+		'error1',
+		'click1'
 	);
 
 	this.loadData( 'level1-6x4-150' );
@@ -34,7 +36,7 @@ $.game.create = function() {
 	this.loadData( 'level8-18x12-50' );
 	this.loadData( 'level9-30x20-30' );
 	this.loadData( 'level10-30x20-30' );
-	this.loadData( 'test-level' );
+	//this.loadData( 'test-level' );
 
 	this.lastRoundTime = 0;
 	this.lastRoundClicks = 0;
@@ -52,8 +54,10 @@ $.game.create = function() {
 
 	if( $.storage.get( 'mute' ) ) {
 		this.sound.setMaster( 0 );
+		this.music.setMaster( 0 );
 	} else {
 		this.sound.setMaster( 1 );
+		this.music.setMaster( 0.5 );
 	}
 
 	$.ctx = this.layer;
@@ -78,9 +82,11 @@ $.game.ready = function() {
 		this.data[ 'level7-18x12-50' ],
 		this.data[ 'level8-18x12-50' ],
 		this.data[ 'level9-30x20-30' ],
-		this.data[ 'level10-30x20-30' ],
-		this.data[ 'test-level' ]
+		this.data[ 'level10-30x20-30' ]
+		//this.data[ 'test-level' ]
 	];
+
+	this.music.play( 'music', true );
 
 	this.setState( $.stateMenu );
 };
@@ -103,15 +109,26 @@ $.game.renderCursor = function() {
 	$.ctx.restore();
 };
 
+$.game.mousedown = function( e ) {
+	var sound = this.playSound( 'click1' );
+	this.sound.setVolume( sound, 2 );
+	var sound = this.playSound( 'click1' );
+	this.sound.setVolume( sound, 2 );
+	var sound = this.playSound( 'click1' );
+	this.sound.setVolume( sound, 2 );
+};
+
 $.game.keydown = function( e ) {
 	if( e.key == 'm' ) {
 		var muted = $.storage.get( 'mute' );
 		if( muted ) {
 			$.storage.set( 'mute', 0 );
 			this.sound.setMaster( 1 );
+			this.music.setMaster( 0.5 );
 		} else {
 			$.storage.set( 'mute', 1 );
 			this.sound.setMaster( 0 );
+			this.music.setMaster( 0 );
 		}
 	}
 };

@@ -19,8 +19,12 @@ $.statePlay.enter = function() {
 	this.levelFlashTick = 0;
 	this.levelFlashTickMax = 100;
 
+	this.enemyFlashTick = 0;
+	this.enemyFlashTickMax = 5;
+
 	this.level = null;
-	this.levelNumber = location.hash ? parseInt( location.hash.substring( 1 ) ) : 1;
+	//this.levelNumber = location.hash ? parseInt( location.hash.substring( 1 ) ) : 1;
+	this.levelNumber = 1;
 	this.levelTotal = $.levels.length;
 	this.generateLevel( this.levelNumber );
 
@@ -85,6 +89,9 @@ $.statePlay.step = function( dt ) {
 		this.levelFlashTick *= 0.92;
 	}
 
+	if( this.enemyFlashTick > 0 ) {
+		this.enemyFlashTick--;
+	}
 
 	this.tick++;
 };
@@ -123,6 +130,11 @@ $.statePlay.render = function( dt ) {
 		$.ctx.fillStyle( 'hsla(' + this.level.hue + ', 90%, ' + ( 90 - ( this.levelFlashTick / this.levelFlashTickMax ) * 40 ) + '%, ' + ( this.levelFlashTick / ( this.levelFlashTickMax / 3 ) ) + ')' );
 		$.ctx.fillText( this.levelNumber, 0, -75 );
 		$.ctx.restore();
+	}
+
+	if( this.enemyFlashTick ) {
+		$.ctx.fillStyle( 'hsla(0, 0%, ' + $.rand( 0, 100 ) + '%, ' + $.rand( 0, 0.075 ) + ')' );
+		$.ctx.fillRect( 0, 0, $.game.width, $.game.height );
 	}
 
 	if( this.endStateTick > 0 ) {

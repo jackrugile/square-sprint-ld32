@@ -60,4 +60,7 @@ $.stateVictory.mousedown = function( e ) {
 	if( this.tick > 50 ) {
 		$.game.setState( $.stateMenu );
 	}
+	if( e.key == 'escape' ) {
+		$.game.setState( $.stateMenu );
+	}
 };

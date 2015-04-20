@@ -229,6 +229,7 @@ $.hero.prototype.charge = function( x, y ) {
 	this.chargeTweenAngle = Math.atan2( dy, dx );
 
 	var sound = $.game.playSound( 'charge1' );
+	$.game.sound.setVolume( sound, 1.3 );
 	$.game.sound.setPlaybackRate( sound, 0.25 + ( this.chargeTweenDistance / $.game.width ) * 0.75 );
 };
 
@@ -274,7 +275,7 @@ $.hero.prototype.warp = function( x, y ) {
 	this.warpAngle = Math.atan2( dy, dx );
 
 	var sound = $.game.playSound( 'warp1' );
-	$.game.sound.setVolume( sound, 0.1 );
+	$.game.sound.setVolume( sound, 0.2 );
 	$.game.sound.setPlaybackRate( sound, 0.9 + ( this.warpDistance / $.game.width ) * 1.1 );
 };
 

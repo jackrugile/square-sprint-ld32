@@ -49,7 +49,16 @@ $.stateTutorial.render = function( dt ) {
 	$.ctx.fillText( 'LEFT CLICK TO CHARGE', $.game.width / 2 - 183, 370);
 	$.ctx.fillText( 'RIGHT CLICK TO WARP', $.game.width / 2 + 183, 370);
 
+	$.ctx.fillText( '[M] MUTE', $.game.width / 2, 520);
+	$.ctx.fillText( '[ESC] MENU', $.game.width / 2, 540);
+
 	$.ctx.drawImage( $.game.images[ 'light' ], $.game.width / 2 - 1000 + Math.sin( this.tick / 150 ) * 100, $.game.height / 2 - 600 );
 	$.ctx.drawImage( $.game.images[ 'screen-overlay' ], 0, 0 );
 	$.game.renderCursor();
 };
+
+$.stateTutorial.keydown = function( e ) {
+	if( e.key == 'escape' ) {
+		$.game.setState( $.stateMenu );
+	}
+}
